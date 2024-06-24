@@ -17,7 +17,7 @@ class TestUrunDetails:
         quantity = int(re.findall(r'\d', quantity)[0])
 
         self.driver.find_element(By.CSS_SELECTOR,"input[id^='add-to-cart-button']").click()
-        time.sleep(2)
+        time.sleep(3)
 
         number_of_products = self.driver.find_element(By.CSS_SELECTOR, "a.ico-cart span:nth-child(2)").text
         number_of_products = re.findall(r'\d', number_of_products)

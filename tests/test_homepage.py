@@ -4,7 +4,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service as ChromeService
 #from selenium.webdriver.chrome.options import Options as ChromeOptions
 import pytest
-
+#POM kullanılmadan proje biraz daha karışık halde benzer bir proje olan ve POM kullanılan test_item_details'ı
+# farkı göremk için inceleeybilirsin
 @pytest.mark.usefixtures("setup")
 class TestHomepage:
     def test_top_menu_items(self):

@@ -1,27 +1,28 @@
+#bu proje POM(Page Object Model) ile düzenlendi
 import time
 from selenium.webdriver.common.by import By
 import re
 import pytest
+from Pages.Anasayfa import Anasayfaa
+from Pages.urun_sayfası import UrunDetaySayfası
+
 
 @pytest.mark.usefixtures("setup")
 class TestUrunDetails:
     def test_add_item(self):
         self.driver.get("https://demowebshop.tricentis.com")
-        self.driver.find_element(By.XPATH, "//div[@class='item-box']//h2/a[not(contains(text(),'Gift Card'))]").click()
 
-        number_of_products=self.driver.find_element(By.CSS_SELECTOR,"a.ico-cart span:nth-child(2)").text
-        number_of_products=re.findall(r'\d',number_of_products)
-        before_number_of_products=int(number_of_products[0])
+        Anasayfa= Anasayfaa(self.driver)
+        Anasayfa.first_item_click()
 
-        quantity=self.driver.find_element(By.CSS_SELECTOR,"input[id$='EnteredQuantity']").get_attribute('value')
-        quantity = int(re.findall(r'\d', quantity)[0])
+        urun_sayfası = UrunDetaySayfası(self.driver)
 
-        self.driver.find_element(By.CSS_SELECTOR,"input[id^='add-to-cart-button']").click()
+        before_number_of_products=urun_sayfası.number_of_items()
+        quantity = int(urun_sayfası.give_quantity_numbers())
+
+        urun_sayfası.add_to_cart_click()
         time.sleep(3)
-
-        number_of_products = self.driver.find_element(By.CSS_SELECTOR, "a.ico-cart span:nth-child(2)").text
-        number_of_products = re.findall(r'\d', number_of_products)
-        after_number_of_products = int(number_of_products[0])
+        after_number_of_products = urun_sayfası.number_of_items()
 
         assert after_number_of_products== (quantity+before_number_of_products)
 

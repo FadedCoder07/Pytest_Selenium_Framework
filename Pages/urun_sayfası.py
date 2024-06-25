@@ -1,10 +1,11 @@
 import re
 from selenium.webdriver.common.by import By
+from Pages.PageBase import PageBase
 
-
-class UrunDetaySayfası:
+class UrunDetaySayfası(PageBase):
 
     def __init__(self,driver):
+        super().__init__(driver)
         self.driver=driver
 
     URUN_SAYİSİ=(By.CSS_SELECTOR,"a.ico-cart span:nth-child(2)")
@@ -19,5 +20,6 @@ class UrunDetaySayfası:
         quantity = self.driver.find_element(*UrunDetaySayfası.URUN_ADET).get_attribute('value')
         return int(re.findall(r'\d', quantity)[0])
     def add_to_cart_click(self):
-        self.driver.find_element(*UrunDetaySayfası.SEPETE_EKLE).click()
+        sepet_ekle=self.wait_element_visibility(UrunDetaySayfası.SEPETE_EKLE)
+        sepet_ekle.click()
 

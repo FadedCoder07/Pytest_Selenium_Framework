@@ -9,11 +9,15 @@ from Pages.urun_sayfası import UrunDetaySayfası
 
 @pytest.mark.usefixtures("setup")
 class TestUrunDetails:
-    def test_add_item(self):
-        self.driver.get("https://demowebshop.tricentis.com")
 
-        Anasayfa= Anasayfaa(self.driver)
-        Anasayfa.first_item_click()
+    @pytest.fixture(autouse=True)
+    def class_setup(self):
+        self.anasayfa = Anasayfaa(self.driver)
+    def test_add_item(self):
+        self.driver.get(self.baseurl)
+
+
+        self.anasayfa.first_item_click()
 
         urun_sayfası = UrunDetaySayfası(self.driver)
 

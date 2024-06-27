@@ -4,6 +4,9 @@ import pytest
 from ddt import ddt, data, unpack
 
 from Pages.arama_sayfasi import AramaSayfasi
+from utilities.ExcelYardimcisi import ExcelYardimcisi
+
+
 #from utilities.ExcelYardimcisi import ExcelYardimcisi
 
 
@@ -20,3 +23,17 @@ class TestArama(unittest.TestCase):
         arama.arama_yap(kelime)
         mesaj = arama.arama_uyari_mesajini_ver()
         assert mesaj == beklenen_mesaj
+
+    @data(*ExcelYardimcisi.excel_listeler_listesine_cevir("./testdata/arama.xlsx", "Sheet1"))
+    @unpack
+    def test_arama(self, senaryoturu, kelime, beklenen_mesaj):
+        self.driver.get(self.baseurl)
+        arama = AramaSayfasi(self.driver)
+        arama.arama_yap(kelime)
+        if senaryoturu.lower() == "negatif":
+            mesaj = arama.arama_uyari_mesajini_ver()
+            assert mesaj == beklenen_mesaj
+        elif senaryoturu.lower() == "pozitif":
+            urun_isimleri = arama.aranan_urun_isimlerini_liste_ver()
+            for isim in urun_isimleri:
+                assert kelime.lower() in isim.lower()

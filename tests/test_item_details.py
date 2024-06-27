@@ -1,32 +1,24 @@
-#bu proje POM(Page Object Model) ile düzenlendi
 import time
-from selenium.webdriver.common.by import By
-import re
 import pytest
-from Pages.Anasayfa import Anasayfaa
-from Pages.urun_sayfası import UrunDetaySayfası
+from Pages.Anasayfa import Anasayfa
+from Pages.urun_sayfası import UrunDetaySayfasi
 
 
 @pytest.mark.usefixtures("setup")
-class TestUrunDetails:
+class TestUrunDetaylari:
 
     @pytest.fixture(autouse=True)
     def class_setup(self):
-        self.anasayfa = Anasayfaa(self.driver)
-    def test_add_item(self):
+        self.anasayfa = Anasayfa(self.driver)
+
+    def test_add_to_cart_button_adds_product_to_cart(self):
         self.driver.get(self.baseurl)
 
+        urun_detay_sayfasi = self.anasayfa.gift_card_olmayan_ilk_urun_ismine_tikla()
+        oncesi = urun_detay_sayfasi.sepetteki_urun_sayisini_ver()
+        quantity = urun_detay_sayfasi.quantity_sayisini_ver()
+        urun_detay_sayfasi.add_to_cart_buttona_tikla()
+        time.sleep(1) # sepetteki urun sayisinin degismesini bekliyor
+        sonrasi = urun_detay_sayfasi.sepetteki_urun_sayisini_ver()
 
-        self.anasayfa.first_item_click()
-
-        urun_sayfası = UrunDetaySayfası(self.driver)
-
-        before_number_of_products=urun_sayfası.number_of_items()
-        quantity = int(urun_sayfası.give_quantity_numbers())
-
-        urun_sayfası.add_to_cart_click()
-        time.sleep(3)
-        after_number_of_products = urun_sayfası.number_of_items()
-
-        assert after_number_of_products== (quantity+before_number_of_products)
-
+        assert sonrasi == (oncesi + quantity)

@@ -1,53 +1,36 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service as ChromeService
-#from selenium.webdriver.chrome.options import Options as ChromeOptions
 import pytest
 import softest
+from Pages.Anasayfa import Anasayfa
+from Pages.urun_sayfası import UrunDetaySayfasi
 
-from Pages.Anasayfa import Anasayfaa
 
-
-#POM kullanılmadan proje biraz daha karışık halde benzer bir proje olan ve POM kullanılan test_item_details'ı
-# farkı göremk için inceleybilirsin
 @pytest.mark.usefixtures("setup")
 class TestHomepage(softest.TestCase):
+
     @pytest.fixture(autouse=True)
     def class_setup(self):
-        self.anasayfa = Anasayfaa(self.driver)
-    def test_top_menu_items(self):
-        self.driver.get(self.baseurl)
+        self.anasayfa = Anasayfa(self.driver)
 
+    @pytest.mark.smoke
+    def test_ust_menu_linklerini_dogrula(self):
+        self.driver.get(self.baseurl)
         expected_menu = ["BOOKS", "COMPUTERS", "ELECTRONICS", "APPAREL & SHOES", "DIGITAL DOWNLOADS",
                          "JEWELRY", "GIFT CARDS"]
-        elements=self.driver.find_elements(By.CSS_SELECTOR,"ul.top-menu>li>a")
 
-        actual_elements=[]
-
-        for i in elements:
-            actual_elements.append(i.text)
-
+        actual_menu_items = self.anasayfa.ust_menu_isimlerini_liste_ver()
         for i in range(len(expected_menu)):
-            assert expected_menu[i] == actual_elements[i]
+            assert expected_menu[i] == actual_menu_items[i]
 
-
-    def test_finding_right_item(self):
-        self.driver.get("https://demowebshop.tricentis.com")
-
-        first_item_link=self.driver.find_element(By.CSS_SELECTOR,"div.product-item h2 a")
-        item_name=first_item_link.text
-
-        item_price=self.driver.find_element(By.CSS_SELECTOR,"span.price.actual-price").text
-        first_item_link.click()
-
-        item_name_detail=self.driver.find_element(By.CSS_SELECTOR,"div.product-name h1").text.strip()
-        item_price_detail=self.driver.find_element(By.CSS_SELECTOR,"div.product-price span").text.strip()
-
-        #assert item_name==item_name_detail
-        #assert item_price==item_price_detail
-        self.soft_assert(self.assertEqual, item_name,item_name_detail, "Urun ismi detay sayfasinda farkli")
-        self.soft_assert(self.assertEqual, item_price,item_price_detail, "Urun fiyati detay sayfasinda farkli")
+    @pytest.mark.smoke
+    def test_urun_ismine_tiklayinca_urun_detaylari_sayfasi_acilir(self):
+        self.driver.get(self.baseurl)
+        urun_ismi = self.anasayfa.ilk_urun_ismini_ver()
+        urun_fiyati = self.anasayfa.ilk_urun_fiyatini_ver()
+        urun_detay_sayfasi = self.anasayfa.ilk_urun_ismine_tikla()
+        print("Anasayfa urun ismi: "+ urun_ismi)
+        print("anasayfa urun fiyati: "+urun_fiyati)
+        urun_ismi_detay_sayfasi = urun_detay_sayfasi.urun_ismini_ver()
+        urun_fiyat_detay_sayfasi = urun_detay_sayfasi.urun_fiyatini_ver()
+        self.soft_assert(self.assertEqual, urun_ismi, urun_ismi_detay_sayfasi, "Urun ismi detay sayfasinda farkli")
+        self.soft_assert(self.assertEqual, urun_fiyati, urun_fiyat_detay_sayfasi, "Urun fiyati detay sayfasinda farkli")
         self.assert_all()
-
-

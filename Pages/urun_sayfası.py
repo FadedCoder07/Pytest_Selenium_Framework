@@ -2,7 +2,7 @@ import re
 from selenium.webdriver.common.by import By
 from Pages.PageBase import PageBase
 
-class UrunDetaySayfası(PageBase):
+class UrunDetaySayfasi(PageBase):
 
     def __init__(self,driver):
         super().__init__(driver)

@@ -23,7 +23,7 @@ class TestHomepage(softest.TestCase):
 
     @pytest.mark.smoke
     def test_urun_ismine_tiklayinca_urun_detaylari_sayfasi_acilir(self):
-        self.driver.get(self.baseurl)
+        self.driver.get(self.base_url)
         urun_ismi = self.anasayfa.ilk_urun_ismini_ver()
         urun_fiyati = self.anasayfa.ilk_urun_fiyatini_ver()
         urun_detay_sayfasi = self.anasayfa.ilk_urun_ismine_tikla()
